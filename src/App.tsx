@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { hideMessage, extractMessage, hasSynonyms } from "./services/steganography";
 import { sampleTexts, sampleBinaryMessages } from "./services/sampleData";
+import { HighlightedTextDisplay } from "./components/highlighted-text-display";
 
 function App() {
     const [sourceText, setSourceText] = useState("");
@@ -169,7 +170,7 @@ function App() {
                     {encodedText && (
                         <div className="result-container">
                             <h3>Tekst z ukrytą wiadomością:</h3>
-                            <div className="encoded-text">{encodedText}</div>
+                            <HighlightedTextDisplay value={encodedText} originalText={originalText} className="encoded-text" />
                         </div>
                     )}
                 </div>
@@ -179,14 +180,12 @@ function App() {
 
                     <div className="input-group">
                         <label htmlFor="stegoText">Tekst z ukrytą wiadomością (tylko do odczytu):</label>
-                        <textarea
-                            id="stegoText"
+                        <HighlightedTextDisplay
                             value={encodedText}
-                            readOnly
-                            rows={10}
-                            placeholder="Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'..."
+                            originalText={originalText}
                             className={hasEncodedMessage ? "" : "disabled-textarea"}
                         />
+                        {!hasEncodedMessage && <div className="hint">Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'...</div>}
                     </div>
 
                     <div className="input-group">
@@ -203,14 +202,6 @@ function App() {
                         />
                         <div className="hint">Długość wiadomości została automatycznie zapamiętana podczas kodowania.</div>
                     </div>
-
-                    {originalText ? (
-                        <div className="info-message">
-                            Dostępny jest oryginalny tekst do porównania, co zapewnia bezbłędne dekodowanie wiadomości.
-                        </div>
-                    ) : (
-                        <div className="warning-message">Brak zakodowanej wiadomości. Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'.</div>
-                    )}
 
                     <button onClick={handleDecode} disabled={!hasEncodedMessage} className="main-button">
                         Odczytaj wiadomość
