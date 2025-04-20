@@ -245,8 +245,9 @@ export const hideMessage = (text: string, message: string): string | null => {
       // Bit 0 - używamy oryginalnego słowa
       // Bit 1 - używamy synonimu
       if (bit === '1') {
-        // Wybierz pierwszy synonim dla uproszczenia
-        const synonym = synonyms[0];
+        // Wybierz losowy synonim z dostępnych
+        const randomIndex = Math.floor(Math.random() * synonyms.length);
+        const synonym = synonyms[randomIndex];
         result[tokenIndex] = preserveCapitalization(word, synonym);
       }
       // Dla bitu 0 zostawiamy oryginalne słowo
