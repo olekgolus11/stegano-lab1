@@ -10,6 +10,7 @@ function App() {
   const [extractedMessage, setExtractedMessage] = useState('')
   const [activeTab, setActiveTab] = useState('encode')
   const [messageLength, setMessageLength] = useState<number | undefined>()
+  const [originalText, setOriginalText] = useState<string | undefined>() // Store original text for decoding
 
   const handleEncode = () => {
     // Ukryj wiadomość w tekście źródłowym
@@ -17,14 +18,15 @@ function App() {
     
     if (result) {
       setEncodedText(result)
-      // Zapamiętaj długość wiadomości dla ułatwienia dekodowania
+      // Zapamiętaj oryginał i długość wiadomości dla dokładnego dekodowania
+      setOriginalText(sourceText)
       setMessageLength(binaryMessage.length)
     }
   }
 
   const handleDecode = () => {
-    // Wyodrębnij ukrytą wiadomość z tekstu
-    const result = extractMessage(encodedText, undefined, messageLength)
+    // Wyodrębnij ukrytą wiadomość z tekstu, używając oryginalnego tekstu, jeśli jest dostępny
+    const result = extractMessage(encodedText, originalText, messageLength)
     
     if (result) {
       setExtractedMessage(result)
@@ -58,6 +60,14 @@ function App() {
   // Wczytaj przykładową wiadomość binarną
   const loadSampleBinaryMessage = (size: 'short' | 'medium' | 'long') => {
     setBinaryMessage(sampleBinaryMessages[size])
+  }
+
+  // Add function to reset original text
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEncodedText(e.target.value)
+    // If the encoded text is changed manually, we need to reset the original text
+    // as we can no longer guarantee it matches
+    setOriginalText(undefined)
   }
 
   return (
@@ -178,7 +188,7 @@ function App() {
             <textarea
               id="stegoText"
               value={encodedText}
-              onChange={(e) => setEncodedText(e.target.value)}
+              onChange={handleTextChange}
               rows={10}
               placeholder="Wprowadź tekst, z którego chcesz odczytać ukrytą wiadomość..."
             />
@@ -199,6 +209,16 @@ function App() {
               Jeśli znasz długość ukrytej wiadomości, podaj ją dla lepszych wyników
             </div>
           </div>
+          
+          {originalText ? (
+            <div className="info-message">
+              Dostępny jest oryginalny tekst do porównania, co znacząco zwiększa dokładność dekodowania.
+            </div>
+          ) : (
+            <div className="warning-message">
+              Brak oryginalnego tekstu. Dekodowanie będzie mniej dokładne. Najlepiej użyj nowo zakodowanej wiadomości lub zakoduj ponownie.
+            </div>
+          )}
           
           <button 
             onClick={handleDecode} 

@@ -19,7 +19,9 @@ Droga do sukcesu bywa kręta, ale warto nią podążać. Bardzo ważne jest, aby
   
 Mały gest może mieć duże znaczenie w odpowiednim momencie. Osoba, z którą rozmawiamy, czuje, czy jesteśmy szczerzy. Dać komuś szansę to często najlepszy prezent. Wolno podejmować decyzje, ale trzeba być konsekwentnym w działaniu.
   
-Wszędzie dobrze, ale w domu najlepiej - to zdanie ma w sobie dużo prawdy. Nigdy nie jest za późno, aby zacząć od nowa. Dzień bez uśmiechu to dzień stracony. Praca, którą wykonujemy z pasją, nie jest ciężarem. Czas jest najcenniejszym zasobem, jaki posiadamy. Sposób, w jaki go wykorzystujemy, definiuje nasze życie. Znajdować radość w małych rzeczach to wielka sztuka. Zły nastrój można zmienić dobrą książką lub rozmową z bliską osobą. Czekać cierpliwie to nie to samo, co marnować czas.`
+Wszędzie dobrze, ale w domu najlepiej - to zdanie ma w sobie dużo prawdy. Nigdy nie jest za późno, aby zacząć od nowa. Dzień bez uśmiechu to dzień stracony. Praca, którą wykonujemy z pasją, nie jest ciężarem. Czas jest najcenniejszym zasobem, jaki posiadamy. Sposób, w jaki go wykorzystujemy, definiuje nasze życie. Znajdować radość w małych rzeczach to wielka sztuka. Zły nastrój można zmienić dobrą książką lub rozmową z bliską osobą. Czekać cierpliwie to nie to samo, co marnować czas.
+  
+Marzenia są jak gwiazdy - trudno je złapać, ale wskazują nam kierunek. Spokój umysłu jest kluczem do jasnego myślenia. Czasami trzeba odpuścić, aby zyskać coś cenniejszego. Historia uczy nas, że każda epoka ma swoje wyzwania i trudności. Świat jest pełen pięknych miejsc, które czekają na odkrycie. Podróż może być równie ważna jak cel, do którego zmierzamy.`
 };
 
 /**
