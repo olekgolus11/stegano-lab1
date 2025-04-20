@@ -3,7 +3,9 @@
  * Teksty zawierają wiele słów, które mają synonimy w naszym słowniku.
  */
 export const sampleTexts = {
-    short: `Dom, w którym mieszkam, znajduje się przy głównej drodze. Każdego dnia widzę, jak ludzie spieszą się do pracy. Myślę, że czas płynie bardzo szybko, gdy jesteśmy zajęci. Osoba, która potrafi dobrze zarządzać swoim dniem, zawsze znajdzie sposób na rozwiązanie trudnych problemów. W dzisiejszym świecie mamy duży wybór metod na polepszenie naszej sytuacji. Stary sposób myślenia nie zawsze jest zły, ale nowy często przynosi ciekawe rozwiązania.`,
+    short: `Dom, w którym mieszkam, znajduje się przy głównej drodze. Każdego dnia widzę, jak ludzie spieszą się do pracy. Myślę, że czas płynie bardzo szybko, gdy jesteśmy zajęci. Osoba, która potrafi dobrze zarządzać swoim dniem, zawsze znajdzie sposób na rozwiązanie trudnych problemów. W dzisiejszym świecie mamy duży wybór metod na polepszenie naszej sytuacji. Stary sposób myślenia nie zawsze jest zły, ale nowy często przynosi ciekawe rozwiązania.
+    
+Stary sposób myślenia nie zawsze jest zły, ale nowy często przynosi ciekawe rozwiązania. Miejsce, w którym się znajdujemy, wpływa na nasz nastrój. Chcieć to móc - tak mówi znane przysłowie. Trudne chwile zawsze mijają, tyle.`,
 
     medium: `Dom, w którym mieszkam, znajduje się przy głównej drodze. Każdego dnia widzę, jak ludzie spieszą się do pracy. Myślę, że czas płynie bardzo szybko, gdy jesteśmy zajęci. Osoba, która potrafi dobrze zarządzać swoim dniem, zawsze znajdzie sposób na rozwiązanie trudnych problemów. W dzisiejszym świecie mamy duży wybór metod na polepszenie naszej sytuacji. 
 
