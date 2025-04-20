@@ -204,14 +204,6 @@ function App() {
                         <div className="hint">Długość wiadomości została automatycznie zapamiętana podczas kodowania.</div>
                     </div>
 
-                    {originalText ? (
-                        <div className="info-message">
-                            Dostępny jest oryginalny tekst do porównania, co zapewnia bezbłędne dekodowanie wiadomości.
-                        </div>
-                    ) : (
-                        <div className="warning-message">Brak zakodowanej wiadomości. Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'.</div>
-                    )}
-
                     <button onClick={handleDecode} disabled={!hasEncodedMessage} className="main-button">
                         Odczytaj wiadomość
                     </button>
