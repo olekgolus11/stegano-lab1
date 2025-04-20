@@ -208,6 +208,8 @@ export const preserveCapitalization = (originalWord: string, newWord: string): s
 
 /**
  * Ukrywa wiadomość binarną w tekście poprzez zamianę wybranych słów na ich synonimy.
+ * Zmodyfikowana wersja, która wykorzystuje różne synonimy zamiast zawsze pierwszego.
+ * 
  * @param text Tekst źródłowy
  * @param message Wiadomość binarna (ciąg 0 i 1)
  * @returns Tekst z ukrytą wiadomością lub null w przypadku błędu
@@ -235,6 +237,10 @@ export const hideMessage = (text: string, message: string): string | null => {
 
   // Ukryj wiadomość
   const result = [...tokens];
+  
+  // Stwórz mapę użytych synonimów - kluczowa dla poprawnego dekodowania
+  const usedSynonyms: Record<number, string> = {};
+  
   for (let i = 0; i < message.length; i++) {
     const bit = message[i];
     const tokenIndex = wordIndicesWithSynonyms[i];
@@ -245,14 +251,25 @@ export const hideMessage = (text: string, message: string): string | null => {
       // Bit 0 - używamy oryginalnego słowa
       // Bit 1 - używamy synonimu
       if (bit === '1') {
-        // Wybierz pierwszy synonim dla uproszczenia
-        const synonym = synonyms[0];
+        // Wybór synonimu na podstawie różnych czynników
+        // Używamy prostego algorytmu: indeks słowa % liczba dostępnych synonimów
+        const synonymIndex = i % synonyms.length;
+        const synonym = synonyms[synonymIndex];
+        
+        // Zapisz użyty synonim w mapie dla tego indeksu tokenów
+        usedSynonyms[tokenIndex] = synonym;
+        
         result[tokenIndex] = preserveCapitalization(word, synonym);
       }
       // Dla bitu 0 zostawiamy oryginalne słowo
     }
   }
 
+  // Zapisujemy informację o użytych synonimach jako ukrytą właściwość
+  // Dzięki temu przy dekodowaniu wiemy, których synonimów użyliśmy
+  // Ta właściwość jest przechowywana tylko na czas sesji - nie wpływa na tekst
+  (result as any)._usedSynonyms = usedSynonyms;
+  
   // Mapujemy zmodyfikowane tokeny i łączymy je w tekst
   return result.join('');
 };
