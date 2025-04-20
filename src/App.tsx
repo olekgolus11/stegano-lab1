@@ -1,77 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import "./App.css";
-import { hideMessage, extractMessage, hasSynonyms, tokenizeText, isWord } from "./services/steganography";
+import { hideMessage, extractMessage, hasSynonyms } from "./services/steganography";
 import { sampleTexts, sampleBinaryMessages } from "./services/sampleData";
-
-// New component for highlighting words with synonyms
-interface HighlightedTextareaProps {
-    value: string;
-    onChange: (value: string) => void;
-    rows: number;
-    placeholder: string;
-}
-
-const HighlightedTextarea: React.FC<HighlightedTextareaProps> = ({ value, onChange, rows, placeholder }) => {
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const highlightRef = useRef<HTMLDivElement>(null);
-    const containerRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-        // Set initial height based on rows
-        if (containerRef.current) {
-            const lineHeight = 1.5; // Common line height
-            const padding = 16; // Approx padding (8px * 2)
-            const heightPx = rows * lineHeight * 16 + padding * 2; // 16px is typical base font size
-            containerRef.current.style.height = `${heightPx}px`;
-        }
-    }, [rows]);
-
-    // Process the text to highlight words with synonyms
-    const getHighlightedText = () => {
-        if (!value) return "";
-
-        const tokens = tokenizeText(value);
-        const highlightedTokens = tokens.map((token) => {
-            if (isWord(token) && hasSynonyms(token)) {
-                return `<span class="has-synonym">${token}</span>`;
-            }
-            return token;
-        });
-
-        return highlightedTokens.join("");
-    };
-
-    // Sync scrolling between the textarea and the highlight layer
-    const handleScroll = () => {
-        if (textareaRef.current && highlightRef.current) {
-            highlightRef.current.scrollTop = textareaRef.current.scrollTop;
-            highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
-        }
-    };
-
-    // Handle textarea resize
-    const handleResize = () => {
-        if (containerRef.current && textareaRef.current) {
-            containerRef.current.style.height = `${textareaRef.current.offsetHeight}px`;
-        }
-    };
-
-    return (
-        <div className="highlighted-textarea-container" ref={containerRef}>
-            <div ref={highlightRef} className="highlight-layer" dangerouslySetInnerHTML={{ __html: getHighlightedText() }} />
-            <textarea
-                ref={textareaRef}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
-                onScroll={handleScroll}
-                onInput={handleResize}
-                rows={rows}
-                placeholder={placeholder}
-                className="text-input"
-            />
-        </div>
-    );
-};
+import { HighlightedTextDisplay } from "./components/highlighted-text-display";
+import { HighlightedTextarea } from "./components/highlighted-textarea";
 
 function App() {
     const [sourceText, setSourceText] = useState("");
@@ -239,7 +171,7 @@ function App() {
                     {encodedText && (
                         <div className="result-container">
                             <h3>Tekst z ukrytą wiadomością:</h3>
-                            <div className="encoded-text">{encodedText}</div>
+                            <HighlightedTextDisplay value={encodedText} originalText={originalText} className="encoded-text" />
                         </div>
                     )}
                 </div>
@@ -249,14 +181,12 @@ function App() {
 
                     <div className="input-group">
                         <label htmlFor="stegoText">Tekst z ukrytą wiadomością (tylko do odczytu):</label>
-                        <textarea
-                            id="stegoText"
+                        <HighlightedTextDisplay
                             value={encodedText}
-                            readOnly
-                            rows={10}
-                            placeholder="Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'..."
+                            originalText={originalText}
                             className={hasEncodedMessage ? "" : "disabled-textarea"}
                         />
+                        {!hasEncodedMessage && <div className="hint">Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'...</div>}
                     </div>
 
                     <div className="input-group">
