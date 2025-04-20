@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 import { hideMessage, extractMessage, hasSynonyms } from "./services/steganography";
-import { sampleTexts, sampleBinaryMessages } from "./services/sampleData";
+import { sampleTexts, sampleBinaryMessages, testTexts } from "./services/sampleData";
 import { HighlightedTextDisplay } from "./components/highlighted-text-display";
 
 function App() {
@@ -56,8 +56,12 @@ function App() {
         return count;
     };
 
-    const loadSampleText = (size: "short" | "medium" | "long") => {
-        setSourceText(sampleTexts[size]);
+    const loadSampleText = (type: "short" | "medium" | "long" | "scientific" | "literary" | "journalistic") => {
+        if (type === "scientific" || type === "literary" || type === "journalistic") {
+            setSourceText(testTexts[type]);
+        } else {
+            setSourceText(sampleTexts[type]);
+        }
     };
 
     const loadSampleBinaryMessage = (size: "short" | "medium" | "long") => {
@@ -91,7 +95,7 @@ function App() {
 
                     <div className="input-group">
                         <div className="label-with-actions">
-                            <label htmlFor="sourceText">Tekst źródłowy (w języku polskim):</label>
+                            <label htmlFor="sourceText">Tekst źródłowy:</label>
                             <div className="sample-actions">
                                 <span>Wczytaj przykład: </span>
                                 <button className="sample-button" onClick={() => loadSampleText("short")}>
@@ -102,6 +106,16 @@ function App() {
                                 </button>
                                 <button className="sample-button" onClick={() => loadSampleText("long")}>
                                     Długi
+                                </button>
+                                <span className="separator">|</span>
+                                <button className="sample-button" onClick={() => loadSampleText("scientific")}>
+                                    Naukowy
+                                </button>
+                                <button className="sample-button" onClick={() => loadSampleText("literary")}>
+                                    Literacki
+                                </button>
+                                <button className="sample-button" onClick={() => loadSampleText("journalistic")}>
+                                    Publicystyczny
                                 </button>
                             </div>
                         </div>
