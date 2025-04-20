@@ -49,6 +49,13 @@ Każde słowo w słowniku ma przypisany zestaw synonimów (zwykle 4), które mog
 
 ## Jak korzystać z aplikacji
 
+### Uruchomienie
+
+Należy posiadać zainstalowanego Node.js oraz npm.
+
+1. npm install
+2. npm run dev
+
 ### Ukrywanie wiadomości
 
 1. W zakładce "Ukryj wiadomość" wprowadź tekst, w którym chcesz ukryć wiadomość (lub wybierz jeden z przykładów).
