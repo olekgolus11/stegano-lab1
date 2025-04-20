@@ -139,6 +139,122 @@ export const synonymDictionary: Record<string, string[]> = {
 };
 
 /**
+ * Ukrywa wiadomość binarną w tekście poprzez zamianę wybranych słów na ich synonimy.
+ *
+ * @param text Tekst źródłowy
+ * @param message Wiadomość binarna (ciąg 0 i 1)
+ * @returns Tekst z ukrytą wiadomością lub null w przypadku błędu
+ */
+export const hideMessage = (text: string, message: string): string | null => {
+    if (!text || !message || !/^[01]+$/.test(message)) {
+        return null;
+    }
+
+    const tokens = tokenizeText(text);
+    const wordIndicesWithSynonyms: number[] = [];
+
+    // Znajdź wszystkie słowa, które mają synonimy
+    tokens.forEach((token, index) => {
+        if (isWord(token) && hasSynonyms(token)) {
+            wordIndicesWithSynonyms.push(index);
+        }
+    });
+
+    // Sprawdź, czy mamy wystarczająco dużo słów do ukrycia całej wiadomości
+    if (wordIndicesWithSynonyms.length < message.length) {
+        alert(`Tekst jest za krótki, aby ukryć wiadomość. Potrzeba co najmniej ${message.length} słów z synonimami.`);
+        return null;
+    }
+
+    const result = [...tokens];
+
+    for (let i = 0; i < message.length; i++) {
+        const bit = message[i];
+        const tokenIndex = wordIndicesWithSynonyms[i];
+        const word = tokens[tokenIndex];
+        const synonyms = getSynonyms(word);
+
+        if (synonyms.length > 0) {
+            // Bit 0 - używamy oryginalnego słowa
+            // Bit 1 - używamy synonimu
+            if (bit === "1") {
+                // Używamy prostego algorytmu: indeks słowa % liczba dostępnych synonimów
+                const synonymIndex = i % synonyms.length;
+                const synonym = synonyms[synonymIndex];
+
+                result[tokenIndex] = preserveCapitalization(word, synonym);
+            }
+            // Dla bitu 0 zostawiamy oryginalne słowo
+        }
+    }
+
+    // Mapujemy zmodyfikowane tokeny i łączymy je w tekst
+    return result.join("");
+};
+
+/**
+ * Wyciągnięcie wiadomości binarnej ukrytej w tekście.
+ *
+ * @param encodedText Tekst z ukrytą wiadomością
+ * @param originalText Oryginalny tekst
+ * @param messageLength Długość ukrytej wiadomości
+ * @returns Wyodrębniona wiadomość binarna lub null w przypadku błędu
+ */
+export const extractMessage = (encodedText: string, originalText: string, messageLength?: number): string | null => {
+    if (!encodedText) {
+        return null;
+    }
+
+    const originalTokens = tokenizeText(originalText);
+    const encodedTokens = tokenizeText(encodedText);
+
+    // Sprawdź, czy obie wersje tekstu mają tę samą liczbę tokenów
+    if (originalTokens.length !== encodedTokens.length) {
+        console.warn("Teksty mają różną liczbę tokenów, co może prowadzić do nieprawidłowego dekodowania.");
+    }
+
+    let extractedMessage = "";
+    let count = 0;
+
+    // Znajdź wszystkie słowa w oryginalnym tekście, które mają synonimy
+    const wordIndicesWithSynonyms: number[] = [];
+
+    for (let i = 0; i < originalTokens.length; i++) {
+        const token = originalTokens[i];
+        if (isWord(token) && hasSynonyms(token)) {
+            wordIndicesWithSynonyms.push(i);
+        }
+    }
+
+    // Teraz porównaj słowa w tych samych pozycjach
+    for (let i = 0; i < wordIndicesWithSynonyms.length; i++) {
+        const index = wordIndicesWithSynonyms[i];
+
+        // Upewnij się, że indeks jest w zakresie obu tablic
+        if (index < originalTokens.length && index < encodedTokens.length) {
+            const originalWord = originalTokens[index].toLowerCase();
+            const encodedWord = encodedTokens[index].toLowerCase();
+
+            // Jeśli słowa są różne, oznacza to bit 1, w przeciwnym razie bit 0
+            if (originalWord !== encodedWord) {
+                extractedMessage += "1";
+            } else {
+                extractedMessage += "0";
+            }
+
+            count++;
+
+            // Jeśli znamy długość wiadomości, przestańmy po jej uzyskaniu
+            if (messageLength && count >= messageLength) {
+                break;
+            }
+        }
+    }
+
+    return extractedMessage;
+};
+
+/**
  * Tokenizuje tekst na słowa, zachowując również znaki interpunkcyjne i spacje.
  * @param text Tekst do tokenizacji
  * @returns Tablica tokenów (słowa, znaki interpunkcyjne, spacje)
@@ -195,123 +311,4 @@ export const preserveCapitalization = (originalWord: string, newWord: string): s
         return newWord.charAt(0).toUpperCase() + newWord.slice(1).toLowerCase();
     }
     return newWord.toLowerCase();
-};
-
-/**
- * Ukrywa wiadomość binarną w tekście poprzez zamianę wybranych słów na ich synonimy.
- *
- * @param text Tekst źródłowy
- * @param message Wiadomość binarna (ciąg 0 i 1)
- * @returns Tekst z ukrytą wiadomością lub null w przypadku błędu
- */
-export const hideMessage = (text: string, message: string): string | null => {
-    if (!text || !message || !/^[01]+$/.test(message)) {
-        return null;
-    }
-
-    const tokens = tokenizeText(text);
-    const wordIndicesWithSynonyms: number[] = [];
-
-    // Znajdź wszystkie słowa, które mają synonimy
-    tokens.forEach((token, index) => {
-        if (isWord(token) && hasSynonyms(token)) {
-            wordIndicesWithSynonyms.push(index);
-        }
-    });
-
-    // Sprawdź, czy mamy wystarczająco dużo słów do ukrycia całej wiadomości
-    if (wordIndicesWithSynonyms.length < message.length) {
-        alert(`Tekst jest za krótki, aby ukryć wiadomość. Potrzeba co najmniej ${message.length} słów z synonimami.`);
-        return null;
-    }
-
-    const result = [...tokens];
-
-    for (let i = 0; i < message.length; i++) {
-        const bit = message[i];
-        const tokenIndex = wordIndicesWithSynonyms[i];
-        const word = tokens[tokenIndex];
-        const synonyms = getSynonyms(word);
-
-        if (synonyms.length > 0) {
-            // Bit 0 - używamy oryginalnego słowa
-            // Bit 1 - używamy synonimu
-            if (bit === "1") {
-                // Używamy prostego algorytmu: indeks słowa % liczba dostępnych synonimów
-                const synonymIndex = i % synonyms.length;
-                const synonym = synonyms[synonymIndex];
-
-                result[tokenIndex] = preserveCapitalization(word, synonym);
-            }
-            // Dla bitu 0 zostawiamy oryginalne słowo
-        }
-    }
-
-    // Mapujemy zmodyfikowane tokeny i łączymy je w tekst
-    return result.join("");
-};
-
-/**
- * Ekstrakt wiadomości binarnej ukrytej w tekście.
- * Przepisana funkcja, która wykorzystuje oryginalny tekst, jeśli jest dostępny.
- *
- * @param encodedText Tekst z ukrytą wiadomością
- * @param originalText Oryginalny tekst (opcjonalnie)
- * @param messageLength Długość ukrytej wiadomości (opcjonalnie)
- * @returns Wyodrębniona wiadomość binarna lub null w przypadku błędu
- */
-export const extractMessage = (encodedText: string, originalText: string, messageLength?: number): string | null => {
-    if (!encodedText) {
-        return null;
-    }
-
-    // Jeśli mamy dostęp do oryginalnego tekstu, to używamy go do dekodowania
-    const originalTokens = tokenizeText(originalText);
-    const encodedTokens = tokenizeText(encodedText);
-
-    // Sprawdź, czy obie wersje tekstu mają tę samą liczbę tokenów
-    if (originalTokens.length !== encodedTokens.length) {
-        console.warn("Teksty mają różną liczbę tokenów, co może prowadzić do nieprawidłowego dekodowania.");
-        // Kontynuujemy mimo to, ale z ostrożnością
-    }
-
-    let extractedMessage = "";
-    let count = 0;
-
-    // Znajdź wszystkie słowa w oryginalnym tekście, które mają synonimy
-    const wordIndicesWithSynonyms: number[] = [];
-
-    for (let i = 0; i < originalTokens.length; i++) {
-        const token = originalTokens[i];
-        if (isWord(token) && hasSynonyms(token)) {
-            wordIndicesWithSynonyms.push(i);
-        }
-    }
-
-    // Teraz porównaj słowa w tych samych pozycjach
-    for (let i = 0; i < wordIndicesWithSynonyms.length; i++) {
-        const index = wordIndicesWithSynonyms[i];
-
-        // Upewnij się, że indeks jest w zakresie obu tablic
-        if (index < originalTokens.length && index < encodedTokens.length) {
-            const originalWord = originalTokens[index].toLowerCase();
-            const encodedWord = encodedTokens[index].toLowerCase();
-
-            // Jeśli słowa są różne, oznacza to bit 1, w przeciwnym razie bit 0
-            if (originalWord !== encodedWord) {
-                extractedMessage += "1";
-            } else {
-                extractedMessage += "0";
-            }
-
-            count++;
-
-            // Jeśli znamy długość wiadomości, przestańmy po jej uzyskaniu
-            if (messageLength && count >= messageLength) {
-                break;
-            }
-        }
-    }
-
-    return extractedMessage;
 };

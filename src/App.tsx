@@ -14,15 +14,13 @@ function App() {
     const [hasEncodedMessage, setHasEncodedMessage] = useState(false);
 
     const handleEncode = () => {
-        // Ukryj wiadomość w tekście źródłowym
         const result = hideMessage(sourceText, binaryMessage);
 
         if (result) {
             setEncodedText(result);
-            // Zapamiętaj oryginał i długość wiadomości dla dokładnego dekodowania
             setOriginalText(sourceText);
             setMessageLength(binaryMessage.length);
-            setHasEncodedMessage(true); // Oznacz, że mamy zakodowaną wiadomość
+            setHasEncodedMessage(true);
         }
     };
 
@@ -31,7 +29,6 @@ function App() {
             alert("Brak oryginalnego tekstu do dekodowania.");
             return;
         }
-        // Wyodrębnij ukrytą wiadomość z tekstu, używając oryginalnego tekstu
         const result = extractMessage(encodedText, originalText, messageLength);
 
         if (result) {
@@ -58,17 +55,14 @@ function App() {
         return count;
     };
 
-    // Wczytaj przykładowy tekst
     const loadSampleText = (size: "short" | "medium" | "long") => {
         setSourceText(sampleTexts[size]);
     };
 
-    // Wczytaj przykładową wiadomość binarną
     const loadSampleBinaryMessage = (size: "short" | "medium" | "long") => {
         setBinaryMessage(sampleBinaryMessages[size]);
     };
 
-    // Przełączanie zakładek z resetowaniem niektórych stanów
     const handleTabChange = (tab: "encode" | "decode") => {
         setActiveTab(tab);
         // Reset wiadomości przy zmianie na zakładkę dekodowania
