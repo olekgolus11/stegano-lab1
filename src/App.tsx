@@ -3,7 +3,6 @@ import "./App.css";
 import { hideMessage, extractMessage, hasSynonyms } from "./services/steganography";
 import { sampleTexts, sampleBinaryMessages } from "./services/sampleData";
 import { HighlightedTextDisplay } from "./components/highlighted-text-display";
-import { HighlightedTextarea } from "./components/highlighted-textarea";
 
 function App() {
     const [sourceText, setSourceText] = useState("");
@@ -106,10 +105,10 @@ function App() {
                                 </button>
                             </div>
                         </div>
-                        {/* Replace standard textarea with HighlightedTextarea */}
-                        <HighlightedTextarea
+                        <textarea
+                            id="sourceText"
                             value={sourceText}
-                            onChange={setSourceText}
+                            onChange={(e) => setSourceText(e.target.value)}
                             rows={10}
                             placeholder="Wprowadź tekst, w którym chcesz ukryć wiadomość..."
                         />
