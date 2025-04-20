@@ -9,11 +9,11 @@ export const synonymDictionary: Record<string, string[]> = {
     dom: ["budynek", "chata", "mieszkanie", "domostwo"],
     droga: ["szlak", "trasa", "ścieżka", "szosa"],
     czas: ["okres", "moment", "chwila", "era"],
-    osoba: ["człowiek", "jednostka", "postać", "osobnik"],
+    osoba: ["jednostka", "człowiek", "postać", "osobnik"],
     praca: ["zajęcie", "robota", "zatrudnienie", "działalność"],
     dzień: ["doba", "jasność", "światło", "pora"],
     miejsce: ["lokalizacja", "pozycja", "punkt", "obszar"],
-    sposób: ["metoda", "tryb", "technika", "forma"],
+    sposób: ["metoda", "technika", "tryb", "forma"],
     problem: ["kłopot", "trudność", "zagadnienie", "wyzwanie"],
     sytuacja: ["okoliczność", "położenie", "stan", "układ"],
     świat: ["glob", "ziemia", "rzeczywistość", "uniwersum"],
@@ -209,7 +209,7 @@ export const synonymDictionary: Record<string, string[]> = {
     okoliczności: ["warunki", "sytuacje", "czynniki", "uwarunkowania"],
     zwolnić: ["spowolnić", "zahamować", "przystopować", "osłabić"],
     popatrzeć: ["spojrzeć", "zerknąć", "oglądnąć", "obserwować"],
-    stresującej: ["napięta", "nerwowa", "trudna", "wymagająca"],
+    stresującej: ["napiętej", "nerwowej", "trudnej", "wymagającej"],
 };
 
 /**
@@ -234,7 +234,6 @@ export const hideMessage = (text: string, message: string): string | null => {
         }
     });
 
-    // Sprawdź, czy mamy wystarczająco dużo słów do ukrycia całej wiadomości
     if (wordIndicesWithSynonyms.length < message.length) {
         alert(`Tekst jest za krótki, aby ukryć wiadomość. Potrzeba co najmniej ${message.length} słów z synonimami.`);
         return null;
@@ -258,11 +257,9 @@ export const hideMessage = (text: string, message: string): string | null => {
 
                 result[tokenIndex] = preserveCapitalization(word, synonym);
             }
-            // Dla bitu 0 zostawiamy oryginalne słowo
         }
     }
 
-    // Mapujemy zmodyfikowane tokeny i łączymy je w tekst
     return result.join("");
 };
 
@@ -282,13 +279,12 @@ export const extractMessage = (encodedText: string, originalText: string, messag
     const originalTokens = tokenizeText(originalText);
     const encodedTokens = tokenizeText(encodedText);
 
-    // Sprawdź, czy obie wersje tekstu mają tę samą liczbę tokenów
     if (originalTokens.length !== encodedTokens.length) {
         console.warn("Teksty mają różną liczbę tokenów, co może prowadzić do nieprawidłowego dekodowania.");
     }
 
     let extractedMessage = "";
-    let count = 0;
+    let messageLengthCounter = 0;
 
     // Znajdź wszystkie słowa w oryginalnym tekście, które mają synonimy
     const wordIndicesWithSynonyms: number[] = [];
@@ -300,7 +296,7 @@ export const extractMessage = (encodedText: string, originalText: string, messag
         }
     }
 
-    // Teraz porównaj słowa w tych samych pozycjach
+    // Porównaj słowa w tych samych pozycjach
     for (let i = 0; i < wordIndicesWithSynonyms.length; i++) {
         const index = wordIndicesWithSynonyms[i];
 
@@ -316,10 +312,10 @@ export const extractMessage = (encodedText: string, originalText: string, messag
                 extractedMessage += "0";
             }
 
-            count++;
+            messageLengthCounter++;
 
             // Jeśli znamy długość wiadomości, przestańmy po jej uzyskaniu
-            if (messageLength && count >= messageLength) {
+            if (messageLength && messageLengthCounter >= messageLength) {
                 break;
             }
         }
