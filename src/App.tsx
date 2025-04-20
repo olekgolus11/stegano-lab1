@@ -1,7 +1,77 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./App.css";
-import { hideMessage, extractMessage, hasSynonyms } from "./services/steganography";
+import { hideMessage, extractMessage, hasSynonyms, tokenizeText, isWord } from "./services/steganography";
 import { sampleTexts, sampleBinaryMessages } from "./services/sampleData";
+
+// New component for highlighting words with synonyms
+interface HighlightedTextareaProps {
+    value: string;
+    onChange: (value: string) => void;
+    rows: number;
+    placeholder: string;
+}
+
+const HighlightedTextarea: React.FC<HighlightedTextareaProps> = ({ value, onChange, rows, placeholder }) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const highlightRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Set initial height based on rows
+        if (containerRef.current) {
+            const lineHeight = 1.5; // Common line height
+            const padding = 16; // Approx padding (8px * 2)
+            const heightPx = rows * lineHeight * 16 + padding * 2; // 16px is typical base font size
+            containerRef.current.style.height = `${heightPx}px`;
+        }
+    }, [rows]);
+
+    // Process the text to highlight words with synonyms
+    const getHighlightedText = () => {
+        if (!value) return "";
+
+        const tokens = tokenizeText(value);
+        const highlightedTokens = tokens.map((token) => {
+            if (isWord(token) && hasSynonyms(token)) {
+                return `<span class="has-synonym">${token}</span>`;
+            }
+            return token;
+        });
+
+        return highlightedTokens.join("");
+    };
+
+    // Sync scrolling between the textarea and the highlight layer
+    const handleScroll = () => {
+        if (textareaRef.current && highlightRef.current) {
+            highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+            highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
+        }
+    };
+
+    // Handle textarea resize
+    const handleResize = () => {
+        if (containerRef.current && textareaRef.current) {
+            containerRef.current.style.height = `${textareaRef.current.offsetHeight}px`;
+        }
+    };
+
+    return (
+        <div className="highlighted-textarea-container" ref={containerRef}>
+            <div ref={highlightRef} className="highlight-layer" dangerouslySetInnerHTML={{ __html: getHighlightedText() }} />
+            <textarea
+                ref={textareaRef}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                onScroll={handleScroll}
+                onInput={handleResize}
+                rows={rows}
+                placeholder={placeholder}
+                className="text-input"
+            />
+        </div>
+    );
+};
 
 function App() {
     const [sourceText, setSourceText] = useState("");
@@ -104,10 +174,10 @@ function App() {
                                 </button>
                             </div>
                         </div>
-                        <textarea
-                            id="sourceText"
+                        {/* Replace standard textarea with HighlightedTextarea */}
+                        <HighlightedTextarea
                             value={sourceText}
-                            onChange={(e) => setSourceText(e.target.value)}
+                            onChange={setSourceText}
                             rows={10}
                             placeholder="Wprowadź tekst, w którym chcesz ukryć wiadomość..."
                         />
