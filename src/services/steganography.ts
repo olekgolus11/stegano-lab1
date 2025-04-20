@@ -147,19 +147,17 @@ export const synonymDictionary: Record<string, string[]> = {
 
 /**
  * Tokenizuje tekst na słowa, zachowując również znaki interpunkcyjne i spacje.
- * Poprawiona wersja, która zachowuje polskie znaki diakrytyczne.
  * @param text Tekst do tokenizacji
  * @returns Tablica tokenów (słowa, znaki interpunkcyjne, spacje)
  */
 export const tokenizeText = (text: string): string[] => {
-  // Wzorzec rozpoznający słowa (w tym z polskimi znakami), znaki interpunkcyjne i spacje
+  // Wzorzec rozpoznający słowa, znaki interpunkcyjne i spacje
   const pattern = /([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ\w]+|[.,!?;:()[\]{}""''„""—–-]|\s+)/g;
   return text.match(pattern) || [];
 };
 
 /**
  * Sprawdza, czy token jest słowem (a nie np. znakiem interpunkcyjnym)
- * Poprawiona wersja, która uwzględnia polskie znaki diakrytyczne.
  * @param token Token do sprawdzenia
  * @returns True, jeśli token jest słowem
  */
@@ -208,7 +206,6 @@ export const preserveCapitalization = (originalWord: string, newWord: string): s
 
 /**
  * Ukrywa wiadomość binarną w tekście poprzez zamianę wybranych słów na ich synonimy.
- * Zmodyfikowana wersja, która wykorzystuje różne synonimy zamiast zawsze pierwszego.
  * 
  * @param text Tekst źródłowy
  * @param message Wiadomość binarna (ciąg 0 i 1)
@@ -235,10 +232,7 @@ export const hideMessage = (text: string, message: string): string | null => {
     return null;
   }
 
-  // Ukryj wiadomość
   const result = [...tokens];
-  
-  // Stwórz mapę użytych synonimów - kluczowa dla poprawnego dekodowania
   const usedSynonyms: Record<number, string> = {};
   
   for (let i = 0; i < message.length; i++) {
@@ -251,7 +245,6 @@ export const hideMessage = (text: string, message: string): string | null => {
       // Bit 0 - używamy oryginalnego słowa
       // Bit 1 - używamy synonimu
       if (bit === '1') {
-        // Wybór synonimu na podstawie różnych czynników
         // Używamy prostego algorytmu: indeks słowa % liczba dostępnych synonimów
         const synonymIndex = i % synonyms.length;
         const synonym = synonyms[synonymIndex];
