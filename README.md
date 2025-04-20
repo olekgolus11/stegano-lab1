@@ -28,11 +28,6 @@ Program wykorzystuje następujący algorytm do ukrywania wiadomości binarnej w 
 
 ## Algorytm dekodowania (krok po kroku)
 
-Aplikacja wykorzystuje dwie metody dekodowania, w zależności od dostępności oryginalnego tekstu:
-
-### Metoda 1: Dekodowanie z oryginalnym tekstem (preferowana)
-
-Jeśli oryginalny tekst jest dostępny, dekodowanie jest proste i precyzyjne:
 
 1. **Tokenizacja** obu tekstów (oryginalnego i zakodowanego) na tokeny.
 
@@ -43,20 +38,6 @@ Jeśli oryginalny tekst jest dostępny, dekodowanie jest proste i precyzyjne:
    - Jeśli słowo w zakodowanym tekście **jest takie samo** jak w oryginale - bit to **0**.
 
 4. **Rekonstrukcja wiadomości** - Bity są zbierane w kolejności, w jakiej występują odpowiadające im słowa w tekście.
-
-### Metoda 2: Dekodowanie bez oryginalnego tekstu
-
-Gdy oryginalny tekst nie jest dostępny, używany jest bardziej złożony algorytm:
-
-1. **Tokenizacja** zakodowanego tekstu na tokeny.
-
-2. **Identyfikacja potencjalnych nośników bitów** - Program identyfikuje wszystkie słowa, które są albo kluczami w słowniku synonimów, albo synonimami występującymi w słowniku.
-
-3. **Interpretacja bitów** dla każdego zidentyfikowanego słowa:
-   - Jeśli słowo jest kluczem w słowniku (słowem bazowym) - bit to **0**.
-   - Jeśli słowo jest synonimem w słowniku - bit to **1**.
-
-4. **Rekonstrukcja wiadomości** - Bity są zbierane w kolejności występowania odpowiadających im słów w tekście.
 
 ## Słownik synonimów
 
@@ -75,19 +56,14 @@ Każde słowo w słowniku ma przypisany zestaw synonimów (zwykle 4), które mog
 1. W zakładce "Ukryj wiadomość" wprowadź tekst, w którym chcesz ukryć wiadomość (lub wybierz jeden z przykładów).
 2. Wprowadź wiadomość binarną (sekwencję 0 i 1) lub wybierz jeden z przykładów.
 3. Kliknij przycisk "Ukryj wiadomość".
-4. Otrzymany tekst z ukrytą wiadomością możesz skopiować do schowka. Chociaż nie jest to konieczne, ponieważ aplikacja automatycznie przechowuje oryginalny tekst, jeśli kodowanie i dekodowanie są wykonywane w tej samej sesji.
 
 ### Odczytywanie wiadomości
 
-1. W zakładce "Odczytaj wiadomość" wprowadź tekst z ukrytą wiadomością, choć powinna być ona wypełniona automatycznie, jeśli kodowanie i dekodowanie są wykonywane w tej samej sesji.
-2. Opcjonalnie podaj długość ukrytej wiadomości (dla lepszych wyników).
-3. Kliknij przycisk "Odczytaj wiadomość".
-4. Odczytana wiadomość binarna zostanie wyświetlona.
+1. W zakładce "Odczytaj wiadomość" kliknij guzik "Odczytaj wiadomość"
+2. Odczytana wiadomość binarna zostanie wyświetlona.
 
-Dokładność dekodowania jest najwyższa, gdy dostępny jest oryginalny tekst (przed ukryciem wiadomości). Aplikacja automatycznie przechowuje oryginalny tekst, jeśli kodowanie i dekodowanie wykonywane są w tej samej sesji.
 
 ## Ograniczenia
 
 - Tekst musi zawierać wystarczającą liczbę słów z synonimami, aby ukryć całą wiadomość.
-- Dokładność dekodowania bez dostępu do oryginalnego tekstu może być niższa dla dłuższych wiadomości.
 - System obsługuje wyłącznie język polski i słowa występujące w zaimplementowanym słowniku synonimów.

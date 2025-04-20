@@ -188,6 +188,13 @@ button:disabled {
   margin: 0;
 }
 
+.disabled-textarea {
+  background-color: #2a2a2a !important;
+  cursor: not-allowed;
+  opacity: 0.7;
+  color: #888 !important;
+}
+
 @media (prefers-color-scheme: light) {
   textarea, input[type="text"], input[type="number"] {
     background-color: #f5f5f5;
@@ -220,5 +227,10 @@ button:disabled {
   .copy-button {
     background-color: #ddd;
     color: #333;
+  }
+
+  .disabled-textarea {
+    background-color: #e0e0e0 !important;
+    color: #777 !important;
   }
 }

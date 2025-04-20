@@ -10,7 +10,8 @@ function App() {
   const [extractedMessage, setExtractedMessage] = useState('')
   const [activeTab, setActiveTab] = useState('encode')
   const [messageLength, setMessageLength] = useState<number | undefined>()
-  const [originalText, setOriginalText] = useState<string | undefined>() // Store original text for decoding
+  const [originalText, setOriginalText] = useState<string | undefined>()
+  const [hasEncodedMessage, setHasEncodedMessage] = useState(false)
 
   const handleEncode = () => {
     // Ukryj wiadomość w tekście źródłowym
@@ -21,11 +22,12 @@ function App() {
       // Zapamiętaj oryginał i długość wiadomości dla dokładnego dekodowania
       setOriginalText(sourceText)
       setMessageLength(binaryMessage.length)
+      setHasEncodedMessage(true) // Oznacz, że mamy zakodowaną wiadomość
     }
   }
 
   const handleDecode = () => {
-    // Wyodrębnij ukrytą wiadomość z tekstu, używając oryginalnego tekstu, jeśli jest dostępny
+    // Wyodrębnij ukrytą wiadomość z tekstu, używając oryginalnego tekstu
     const result = extractMessage(encodedText, originalText, messageLength)
     
     if (result) {
@@ -62,12 +64,13 @@ function App() {
     setBinaryMessage(sampleBinaryMessages[size])
   }
 
-  // Add function to reset original text
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setEncodedText(e.target.value)
-    // If the encoded text is changed manually, we need to reset the original text
-    // as we can no longer guarantee it matches
-    setOriginalText(undefined)
+  // Przełączanie zakładek z resetowaniem niektórych stanów
+  const handleTabChange = (tab: 'encode' | 'decode') => {
+    setActiveTab(tab);
+    // Reset wiadomości przy zmianie na zakładkę dekodowania
+    if (tab === 'decode') {
+      setExtractedMessage('');
+    }
   }
 
   return (
@@ -77,13 +80,13 @@ function App() {
       <div className="tabs">
         <button 
           className={activeTab === 'encode' ? 'active' : ''} 
-          onClick={() => setActiveTab('encode')}
+          onClick={() => handleTabChange('encode')}
         >
           Ukryj wiadomość
         </button>
         <button 
           className={activeTab === 'decode' ? 'active' : ''} 
-          onClick={() => setActiveTab('decode')}
+          onClick={() => handleTabChange('decode')}
         >
           Odczytaj wiadomość
         </button>
@@ -167,15 +170,6 @@ function App() {
               <div className="encoded-text">
                 {encodedText}
               </div>
-              <button 
-                className="copy-button"
-                onClick={() => {
-                  navigator.clipboard.writeText(encodedText);
-                  alert('Tekst skopiowany do schowka!');
-                }}
-              >
-                Kopiuj do schowka
-              </button>
             </div>
           )}
         </div>
@@ -184,13 +178,14 @@ function App() {
           <h2>Odczytywanie ukrytej wiadomości</h2>
           
           <div className="input-group">
-            <label htmlFor="stegoText">Tekst z ukrytą wiadomością:</label>
+            <label htmlFor="stegoText">Tekst z ukrytą wiadomością (tylko do odczytu):</label>
             <textarea
               id="stegoText"
               value={encodedText}
-              onChange={handleTextChange}
+              readOnly
               rows={10}
-              placeholder="Wprowadź tekst, z którego chcesz odczytać ukrytą wiadomość..."
+              placeholder="Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'..."
+              className={hasEncodedMessage ? "" : "disabled-textarea"}
             />
           </div>
           
@@ -204,25 +199,26 @@ function App() {
               value={messageLength || ''}
               onChange={(e) => setMessageLength(parseInt(e.target.value) || undefined)}
               placeholder="Opcjonalnie"
+              readOnly
             />
             <div className="hint">
-              Jeśli znasz długość ukrytej wiadomości, podaj ją dla lepszych wyników
+              Długość wiadomości została automatycznie zapamiętana podczas kodowania.
             </div>
           </div>
           
           {originalText ? (
             <div className="info-message">
-              Dostępny jest oryginalny tekst do porównania, co znacząco zwiększa dokładność dekodowania.
+              Dostępny jest oryginalny tekst do porównania, co zapewnia bezbłędne dekodowanie wiadomości.
             </div>
           ) : (
             <div className="warning-message">
-              Brak oryginalnego tekstu. Dekodowanie będzie mniej dokładne. Najlepiej użyj nowo zakodowanej wiadomości lub zakoduj ponownie.
+              Brak zakodowanej wiadomości. Najpierw ukryj wiadomość w zakładce 'Ukryj wiadomość'.
             </div>
           )}
           
           <button 
             onClick={handleDecode} 
-            disabled={!encodedText}
+            disabled={!hasEncodedMessage}
             className="main-button"
           >
             Odczytaj wiadomość
@@ -237,15 +233,6 @@ function App() {
               <div className="bit-counter">
                 Długość: {extractedMessage.length} bitów
               </div>
-              <button 
-                className="copy-button"
-                onClick={() => {
-                  navigator.clipboard.writeText(extractedMessage);
-                  alert('Wiadomość skopiowana do schowka!');
-                }}
-              >
-                Kopiuj do schowka
-              </button>
             </div>
           )}
         </div>
